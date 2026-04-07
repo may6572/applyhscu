@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>화신사이버대학교 입학지원센터</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 아이콘 표시를 위한 Font Awesome 추가 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* 글자 크기를 전체적으로 약 20% 키움 */
+        html { font-size: 120%; }
+        
+        body { font-family: 'Noto Sans KR', sans-serif; overflow-x: hidden; }
+        .bg-primary { background-color: #002147; }
+        .text-primary { color: #002147; }
+        .border-primary { border-color: #002147; }
+        
+        /* Navigation */
+        .nav-active { color: #1e3a8a; border-bottom: 3px solid #1e3a8a; }
+        .sub-nav-active { background-color: #1e3a8a; color: white; border-radius: 0.5rem; }
+        
+        /* Transitions */
+        .page-content, .sub-page-content { display: none; }
+        .page-content.active, .sub-page-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Slider Custom Styles */
+        .hero-gradient {
+            position: relative;
+            overflow: hidden;
+            background: #002147; /* Fallback color */
+        }
+
+        .slider-wrapper {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(0, 33, 71, 0.5), rgba(0, 33, 71, 0.3));
+            z-index: 1;
+        }
+
+        .slider-controls {
+            position: absolute;
+            bottom: 4rem; /* 카드 섹션(-mt-12)에 가려지지 않도록 높이 조절 */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .slider-btn {
+            color: white;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .slider-btn:hover {
+            opacity: 1;
+        }
+
+        .step-number {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #002147, #1e3a8a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .dept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 33, 71, 0.1);
+        }
+
+        /* Tables & Rounded Containers */
+        .table-container { 
+            overflow: hidden; 
+            border-radius: 1rem; 
+            border: 1px solid #e2e8f0; 
+            background-color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        .table-custom { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .table-custom th { background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 700; padding: 1rem; color: #002147; text-align: center; }
+        .table-custom td { border-bottom: 1px solid #f1f5f9; padding: 1rem; vertical-align: middle; }
+        .table-custom tr:last-child td { border-bottom: none; }
+        .table-custom .border-r { border-right: 1px solid #e2e8f0; }
+        
+        .accent-box { background-color: #f0f7ff; border-left: 4px solid #1e3a8a; }
+        .guide-section-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; align-items: center; color: #1e293b; }
+        .guide-section-title span { width: 4px; height: 18px; background-color: #002147; border-radius: 2px; margin-right: 10px; }
+        
+        /* Card Hover Effect for New Content */
+        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800">
+
+    <!-- Custom Alert -->
+    <div id="custom-alert" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAlert()"></div>
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 relative z-10 shadow-2xl text-center">
+            <p id="alert-message" class="text-lg font-medium mb-6"></p>
+            <button onclick="closeAlert()" class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:opacity-90">확인</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center h-20">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="flex items-center">
+					<img src="https://apply.hscu.ac.kr/wp-content/uploads/2019/07/logo-1.png" class="h-11 w-auto object-contain">
+                </div>
+            </div>
+
+            <nav class="hidden lg:flex space-x-6 h-full items-center">
+                <button onclick="navigateTo('intro')" class="nav-link px-2 py-7 font-bold text-gray-600 hover:text-primary">입학안내</button>
+                <button onclick="navigateTo('guide')" class="nav-link px-2 py-7 font-bold text-gray-600 hover:text-primary">모집요강</button>
+                <button onclick="navigateTo('apply')" class="nav-link px-2 py-7 font-bold text-gray-600 hover:text-primary">지원서작성</button>
+                <button onclick="navigateTo('status')" class="nav-link px-2 py-7 font-bold text-gray-600 hover:text-primary">나의지원현황</button>
+                <button onclick="navigateTo('archive')" class="nav-link px-2 py-7 font-bold text-gray-600 hover:text-primary">입학자료실</button>
+                <button onclick="navigateTo('qna')" class="nav-link px-2 py-7 font-bold text-gray-600 hover:text-primary">입학상담실</button>
+            </nav>
+
+            <button class="lg:hidden p-2" onclick="toggleMobileMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 p-4 space-y-2 shadow-xl absolute w-full">
+            <button onclick="navigateTo('intro')" class="block w-full text-left p-3 hover:bg-gray-50 rounded-lg font-medium">입학안내</button>
+            <button onclick="navigateTo('guide')" class="block w-full text-left p-3 hover:bg-gray-50 rounded-lg font-medium">모집요강</button>
+            <button onclick="navigateTo('apply')" class="block w-full text-left p-3 hover:bg-gray-50 rounded-lg font-medium">지원서작성</button>
+            <button onclick="navigateTo('status')" class="block w-full text-left p-3 hover:bg-gray-50 rounded-lg font-medium">나의지원현황</button>
+            <button onclick="navigateTo('archive')" class="block w-full text-left p-3 hover:bg-gray-50 rounded-lg font-medium">입학자료실</button>
+            <button onclick="navigateTo('qna')" class="block w-full text-left p-3 hover:bg-gray-50 rounded-lg font-medium">입학상담실</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- HOME PAGE -->
+        <section id="page-home" class="page-content active">
+            <div class="hero-gradient pt-20 pb-32 text-center text-white relative">
+                <!-- Background Slider -->
+                <div class="slider-wrapper">
+                    <div class="slide active" style="background-image: url('https://www.hscu.ac.kr/home/division/drn/images/cert_img1.jpg');"></div>
+                    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="hero-overlay"></div>
+                </div>
+
+                <div class="max-w-4xl mx-auto relative z-10">
+                    <span class="inline-block bg-blue-500/20 text-blue-300 px-4 py-1 rounded-full text-sm font-bold mb-4 border border-blue-500/30">Hwashin Cyber University</span>
+                    <h1 class="text-4xl md:text-7xl font-black mb-6 leading-tight">
+                        2026학년도 2학기<br><span class="text-blue-400">신·편입생</span> 모집
+                    </h1>
+                    <p class="text-xl md:text-2xl text-slate-300 mb-10 font-light">공부 걱정 NO! 등록금 걱정 NO!<br>전담 교수님이 끝까지 도와드리는 즐거운 대학 생활</p>
+                    <div class="bg-yellow-400 text-blue-900 px-10 py-4 rounded-2xl font-black text-2xl shadow-[0_10px_30px_rgba(250,204,21,0.3)] inline-block mb-8">
+                        2026. 06. 01. 모집 예정!
+                    </div>
+                </div>
+                
+                <div class="container mx-auto px-4 relative z-10">
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="navigateTo('apply')" class="bg-white text-primary px-8 py-4 rounded-full font-bold text-lg hover:bg-blue-50 transition-all shadow-xl">지금 지원하기</button>
+                        <button onclick="navigateTo('guide')" class="bg-transparent border-2 border-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all">모집요강 보기</button>
+                    </div>
+                </div>
+
+                <!-- Slider Controls -->
+                <div class="slider-controls">
+                    <button onclick="prevSlide()" class="slider-btn">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button onclick="togglePlay()" id="play-pause-btn" class="slider-btn">
+                        <svg id="pause-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                        <svg id="play-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    </button>
+                    <button onclick="nextSlide()" class="slider-btn">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="container mx-auto px-4 -mt-12 relative z-20">
+                <div class="bg-white rounded-3xl shadow-xl p-8 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    <div class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-2xl cursor-pointer" onclick="navigateTo('intro', 'schedule')">
+                        <div class="text-primary mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
+                        <span class="font-bold">입시일정</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-2xl cursor-pointer" onclick="navigateTo('intro', 'dept')">
+                        <div class="text-primary mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg></div>
+                        <span class="font-bold">학과정보</span>
+                    </div>
+                    <div class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-2xl cursor-pointer" onclick="navigateTo('status', 'result')">
+                        <div class="text-primary mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                        <span class="font-bold">합격조회</span>
+                    </div>
+                    <div class="flex flex-col items-center p-3.5 hover:bg-gray-50 rounded-2xl cursor-pointer" onclick="window.open('https://www.hscu.ac.kr', '_blank')">
+                        <div class="text-primary mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg></div>
+                        <span class="font-bold">FAQ</span>
+                    </div>
+                    <div class="hidden lg:flex flex-col items-center p-4 hover:bg-gray-50 rounded-2xl cursor-pointer" onclick="navigateTo('archive', 'down')">
+                        <div class="text-primary mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
+                        <span class="font-bold">자료실</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Wrapper -->
+            <div class="max-w-6xl mx-auto px-4 mt-12 mb-20 relative z-20">
+                
+                <!-- Key Benefits -->
+                <div class="grid md:grid-cols-2 gap-6 mb-12">
+                    <div class="bg-white rounded-3xl shadow-xl p-8 border border-blue-100 flex items-center space-x-6 card-hover">
+                        <div class="hidden sm:flex w-20 h-20 bg-blue-50 rounded-2xl items-center justify-center text-4xl text-blue-600 shrink-0">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900 mb-1">등록금 전액 무료 혜택</h3>
+                            <p class="text-slate-500 leading-relaxed">소득분위 <span class="text-blue-600 font-bold">8분위까지 국가장학금 전액 지원!</span> 학비 부담 없이 학위 취득하세요.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-3xl shadow-xl p-8 border border-emerald-100 flex items-center space-x-6 card-hover">
+                        <div class="hidden sm:flex w-20 h-20 bg-emerald-50 rounded-2xl items-center justify-center text-4xl text-emerald-600 shrink-0">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900 mb-1">공부가 제일 쉬웠어요!</h3>
+                            <p class="text-slate-500 leading-relaxed"><span class="text-emerald-600 font-bold">전담 교수 및 조교의 1:1 밀착 학업 지원</span>으로 누구나 중도 포기 없이 졸업 가능합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Professional Certificates -->
+                <section class="bg-indigo-900 rounded-[3rem] p-10 md:p-16 mb-16 text-white relative overflow-hidden">
+                    <div class="absolute right-0 bottom-0 opacity-5">
+                        <i class="fa-solid fa-stamp text-[20rem]"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="mb-10">
+                            <h3 class="text-3xl md:text-4xl font-bold mb-4">시험 없이 취득하는 국가자격증</h3>
+                            <p class="text-indigo-200 text-lg">우리 학과 수업만 들으면 졸업과 동시에 자격증이 내 손에!</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div class="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm">
+                                <div class="text-3xl mb-4 text-yellow-400"><i class="fa-solid fa-heart"></i></div>
+                                <h4 class="text-xl font-bold mb-2">사회복지사 2급</h4>
+                                <p class="text-indigo-100 text-sm">무시험 취득 가능 / 사회복지학과</p>
+                            </div>
+                            <div class="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm">
+                                <div class="text-3xl mb-4 text-orange-400"><i class="fa-solid fa-book-open"></i></div>
+                                <h4 class="text-xl font-bold mb-2">한국어교원 2급</h4>
+                                <p class="text-indigo-100 text-sm">무시험 취득 가능 / 한국어교육학과</p>
+                            </div>
+                            <div class="bg-white/10 p-6 rounded-2xl border border-white/20 backdrop-blur-sm">
+                                <div class="text-3xl mb-4 text-cyan-400"><i class="fa-solid fa-chalkboard-user"></i></div>
+                                <h4 class="text-xl font-bold mb-2">평생교육사</h4>
+                                <p class="text-indigo-100 text-sm">무시험 취득 가능 / 전 학과 공통</p>
+                            </div>
+                        </div>
+                        <p class="mt-8 text-indigo-300 text-sm italic">* 보건복지부, 교육부 규정에 따른 이수 과목 및 성적 기준 충족 시</p>
+                    </div>
+                </section>
+
+                <!-- Departments Grid -->
+                <section class="mb-20">
+                    <div class="text-center mb-12">
+                        <h3 class="text-4xl font-black text-slate-900 mb-4">모집 학과</h3>
+                        <div class="w-20 h-1.5 bg-blue-600 mx-auto rounded-full"></div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/kor/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-rose-500"><i class="fa-solid fa-language"></i></div>
+                            <h4 class="font-bold text-lg">한국어교육학과</h4>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/for/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-blue-500"><i class="fa-solid fa-globe"></i></div>
+                            <h4 class="font-bold text-lg">실용외국어학과</h4>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/spt/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-emerald-500"><i class="fa-solid fa-dumbbell"></i></div>
+                            <h4 class="font-bold text-lg">융합스포츠지도학과</h4>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/drn/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-indigo-500"><i class="fa-solid fa-rocket"></i></div>
+                            <h4 class="font-bold text-lg">실용드론학과</h4>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/wel/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-orange-500"><i class="fa-solid fa-hands-holding-child"></i></div>
+                            <h4 class="font-bold text-lg">사회복지학과</h4>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/psy/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-purple-500"><i class="fa-solid fa-user-group"></i></div>
+                            <h4 class="font-bold text-lg">상담심리학과</h4>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/mng/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-amber-500"><i class="fa-solid fa-briefcase"></i></div>
+                            <h4 class="font-bold text-lg">복지경영학과</h4>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm text-center card-hover border border-slate-100" onclick="window.open('https://www.hscu.ac.kr/home/division/fam/index.jsp', '_blank')">
+                            <div class="text-4xl mb-4 text-green-600"><i class="fa-solid fa-seedling"></i></div>
+                            <h4 class="font-bold text-lg text-xs sm:text-base leading-tight">스마트팜농수산복지학과</h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Process and Documents -->
+                <div class="grid lg:grid-cols-3 gap-8 mb-20">
+                    <div class="lg:col-span-2 bg-white p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
+                        <h3 class="text-2xl font-bold mb-8 flex items-center">
+                            <span class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center mr-3 text-sm">01</span>
+                            입학 지원 프로세스
+                        </h3>
+                        <div class="grid sm:grid-cols-3 gap-6 relative">
+                            <div class="text-center relative">
+                                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">1</div>
+                                <h4 class="font-bold mb-2">온라인 원서 접수</h4>
+                                <p class="text-slate-500 text-sm italic font-medium text-blue-600">학업계획서 동시 작성!</p>
+                                <p class="text-slate-400 text-xs mt-2">본인이 온라인에서 직접 입력</p>
+                            </div>
+                            <div class="text-center relative">
+                                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">2</div>
+                                <h4 class="font-bold mb-2">서류 제출 및 검사</h4>
+                                <p class="text-slate-500 text-sm">인적성검사 온라인 응시</p>
+                                <p class="text-slate-400 text-xs mt-2">등기 또는 방문 서류 제출</p>
+                            </div>
+                            <div class="text-center relative">
+                                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">3</div>
+                                <h4 class="font-bold mb-2">합격 발표 및 장학 신청</h4>
+                                <p class="text-slate-500 text-sm font-bold text-red-500">국가장학금 본인 직접 신청</p>
+                                <p class="text-slate-400 text-xs mt-2">한국장학재단 홈페이지</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 text-white p-10 rounded-[2.5rem] shadow-xl">
+                        <h3 class="text-2xl font-bold mb-8">필요 서류 안내</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <p class="text-blue-400 font-bold mb-2 text-sm uppercase">신입생 지원 시</p>
+                                <ul class="space-y-2 text-sm text-slate-300">
+                                    <li>• 고등학교 졸업증명서 1부</li>
+                                    <li>• 성적증명서 또는 생활기록부 1부</li>
+                                </ul>
+                            </div>
+                            <div class="pt-4 border-t border-slate-800">
+                                <p class="text-emerald-400 font-bold mb-2 text-sm uppercase">편입생 지원 시</p>
+                                <ul class="space-y-2 text-sm text-slate-300">
+                                    <li>• 전적대학교 졸업증명서 1부</li>
+                                    <li>• 전적대학교 성적증명서 1부</li>
+                                </ul>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-6">* 대학원 서류는 제출하실 필요 없습니다.<br>* 정원 외 전형은 추가 서류가 필요할 수 있습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Critical Warning -->
+                <div class="bg-red-50 border-2 border-red-100 rounded-3xl p-8 mb-20 flex flex-col md:flex-row items-center gap-6">
+                    <div class="w-20 h-20 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-4xl shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-red-900 mb-2">담당자가 전하는 중요 체크사항!</h3>
+                        <ul class="text-slate-700 space-y-1 font-medium">
+                            <li>1. <span class="text-red-600">학업계획서</span>는 원서 접수 시 본인이 직접 온라인으로 작성해야 합니다.</li>
+                            <li>2. <span class="text-red-600">국가장학금</span>은 대학과 별개로 '한국장학재단'에서 본인이 직접 신청해야 전액 무료 혜택을 받습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Page Wrapper -->
+        <section class="container mx-auto px-4 py-12">
+            <div class="flex flex-col lg:flex-row gap-8">
+                
+                <!-- Sidebar -->
+                <aside id="sidebar" class="lg:w-64 flex-shrink-0 hidden">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sticky top-28">
+                        <h3 id="sidebar-title" class="text-xl font-bold text-primary mb-6 px-2 border-b pb-4">메뉴</h3>
+                        <nav id="sub-nav-container" class="flex flex-col space-y-1"></nav>
+                    </div>
+                </aside>
+
+                <!-- Content Area -->
+                <div id="main-content-container" class="flex-grow">
+                    
+                    <!-- 1. 입학안내 (INTRO) -->
+                    <div id="page-intro" class="page-content">
+                        <!-- 입시일정 -->
+                        <div id="sub-intro-schedule" class="sub-page-content active">
+                            <h2 class="text-3xl font-bold mb-2 text-primary">입시일정</h2>
+                            <p class="text-gray-500 mb-8 font-medium italic">꿈과 열정으로 새 지평을 열어가는 글로벌 시대의 주역</p>
+                            
+                            <div class="bg-white p-8 rounded-2xl border mb-10 shadow-sm leading-relaxed text-sm text-gray-600">
+                                <p class="mb-4">화신사이버대학교는 개정된 고등교육법에 근거하여 신설된 첫 번째 정규 4년제 대학교입니다.</p>
+                                <p>소수정예 학과운영, 1:1 맞춤형 진로지도, 고품질의 콘텐츠 제작, 다양한 장학혜택을 통해 재학생 만족도가 높은 본 대학교는 신·편입생 등록생을 다음과 같이 모집합니다.</p>
+                            </div>
+
+                            <h3 class="text-xl font-bold mb-4 flex items-center"><span class="w-1 h-5 bg-primary rounded-full mr-2"></span> 신·편입학 모집일정</h3>
+                            <div class="table-container mb-10">
+                                <table class="table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-r">모집구분</th>
+                                            <th class="border-r">원서접수 및 서류제출</th>
+                                            <th class="border-r">합격자발표</th>
+                                            <th>수강신청 및 등록</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr>
+                                            <td class="py-6 font-bold bg-slate-50 border-r">1차 모집</td>
+                                            <td class="border-r">2025.12.1.(월) ~ 2026.1.9.(금) 17:00까지</td>
+                                            <td class="border-r">2026.1.15.(목)</td>
+                                            <td>2026.1.15.(목) ~ 16.(금)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-6 font-bold bg-slate-50 border-r">2차 모집</td>
+                                            <td class="border-r">2026.1.19.(월) ~ 2.19.(목) 17:00까지</td>
+                                            <td class="border-r">2026.2.25.(수)</td>
+                                            <td>2026.2.25.(수) ~ 26.(목)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h3 class="text-xl font-bold mb-4 flex items-center"><span class="w-1 h-5 bg-primary rounded-full mr-2"></span> 시간제 모집일정</h3>
+                            <div class="table-container mb-10">
+                                <table class="table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-r">모집구분</th>
+                                            <th class="border-r">원서접수</th>
+                                            <th class="border-r">서류제출</th>
+                                            <th class="border-r">합격자발표</th>
+                                            <th>수강신청 및 등록</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr>
+                                            <td class="py-6 font-bold bg-slate-50 border-r">1차 모집</td>
+                                            <td class="border-r">2025.12.16.(화) ~ 25.12.17.(수) 17:00까지</td>
+                                            <td class="border-r">2025.12.18.(목) ~ 24.(수)</td>
+                                            <td class="border-r">2025.12.30.(화)</td>
+                                            <td>2025.12.30.(화) ~ 31.(수)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h3 class="text-xl font-bold mb-4 flex items-center"><span class="w-1 h-5 bg-primary rounded-full mr-2"></span> 모집전형 (이미지 원본)</h3>
+                            <div class="table-container">
+                                <table class="table-custom text-left">
+                                    <thead>
+                                        <tr class="text-center"><th class="w-24 border-r">구분</th><th>내용</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="font-bold text-center bg-slate-50 border-r">신입학</td>
+                                            <td>고등학교 졸업(2025년 2월 졸업예정포함) 및 법령에 의해 동등 이상의 학력이 있는 자<br><span class="text-gray-400 text-xs">(단, 외국 검정고시 출신자 지원 불가)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-bold text-center bg-slate-50 border-r">편입생</td>
+                                            <td class="py-6">
+                                                <div class="mb-4">
+                                                    <p class="font-bold text-primary mb-1">[2학년 편입학]</p>
+                                                    <p class="text-xs text-slate-500 mb-1">다음 중 1개 이상의 호에 해당하는 자</p>
+                                                    <ul class="text-xs space-y-1 pl-4 list-decimal">
+                                                        <li>4년제 대학(원격대학, 산업대 포함)에서 1년(2개 학기) 이상 수료하고 35학점 이상을 취득(예정)한 자</li>
+                                                        <li>전문대학 졸업(예정)자 및 법령에 의하여 이와 동등한 학력이 있다고 인정되는 자</li>
+                                                        <li>학점인정 등에 관한 법률에 의거, 35학점 이상을 취득한 자</li>
+                                                    </ul>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-primary mb-1">[3학년 편입학]</p>
+                                                    <p class="text-xs text-slate-500 mb-1">다음 중 1개 이상의 호에 해당하는 자</p>
+                                                    <ul class="text-xs space-y-1 pl-4 list-decimal">
+                                                        <li>4년제 대학(원격대학, 산업대 포함)에서 2년(4개 학기) 이상 수료하고 70학점 이상을 취득(예정)한 자</li>
+                                                        <li>전문대학 졸업(예정)자 및 법령에 의하여 이와 동등한 학력이 있다고 인정되는 자</li>
+                                                        <li>학점인정 등에 관한 법률 및 평생교육법에 의거, 70학점 이상을 취득한 자</li>
+                                                        <li>「고등교육법」 제50조의3에 따른 전문대학 간호학과에서 수업연한을 4년으로 하는 과정을 2학년 또는 4학기(계절수업 제외) 이상 수료하고 70학점 이상을 취득한 자</li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-bold text-center bg-slate-50 border-r">시간제</td>
+                                            <td>고등학교 졸업(2025년 2월 졸업예정포함) 및 법령에 의해 동등 이상의 학력이 있는 자<br><span class="text-gray-400 text-xs">(단, 외국 검정고시 출신자 지원 불가)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 입학절차안내 -->
+                        <div id="sub-intro-procedure" class="sub-page-content">
+                            <h2 class="text-3xl font-bold mb-8 text-primary">입학절차안내</h2>
+                            <div class="mb-16">
+                                <h3 class="text-xl font-bold mb-6">일반전형 이란?</h3>
+                                <div class="accent-box p-8 rounded-2xl shadow-sm space-y-3">
+                                    <p class="text-lg font-medium text-slate-700 italic">"고등학교 졸업이상의 학력소지자는 지원할 수 있습니다."</p>
+                                    <p class="text-slate-500 italic">"외국대학 재학생이나 국내 대학원재학생은 지원이 가능합니다."</p>
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <h3 class="text-xl font-bold mb-8">모집전형 (7단계 상세)</h3>
+                                <div class="grid grid-cols-1 gap-6">
+                                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row md:items-center group hover:border-primary transition-all">
+                                        <div class="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 md:mb-0 md:mr-8 group-hover:bg-primary transition-all text-2xl font-black text-primary group-hover:text-white">01</div>
+                                        <div><h4 class="text-lg font-bold mb-2">입학지원센터 홈페이지 모집요강 확인</h4><p class="text-sm text-gray-500">홈페이지 접속(https://apply.hscu.ac.kr/) 및 전형 일정, 유의사항 확인</p></div>
+                                    </div>
+                                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row md:items-center group hover:border-primary transition-all">
+                                        <div class="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 md:mb-0 md:mr-8 group-hover:bg-primary transition-all text-2xl font-black text-primary group-hover:text-white">02</div>
+                                        <div><h4 class="text-lg font-bold mb-2">원서접수 및 학업계획서 작성</h4><p class="text-sm text-gray-500">지원구분 유념하여 원서작성(편입은 학업계획서 필수)</p></div>
+                                    </div>
+                                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row md:items-center group hover:border-primary transition-all">
+                                        <div class="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 md:mb-0 md:mr-8 group-hover:bg-primary transition-all text-2xl font-black text-primary group-hover:text-white">03</div>
+                                        <div><h4 class="text-lg font-bold mb-2">전형료 납부</h4><p class="text-sm text-gray-500">카드 또는 무통장입금(미납 시 불합격 처리)</p></div>
+                                    </div>
+                                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row md:items-center group hover:border-primary transition-all">
+                                        <div class="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 md:mb-0 md:mr-8 group-hover:bg-primary transition-all text-2xl font-black text-primary group-hover:text-white">04</div>
+                                        <div><h4 class="text-lg font-bold mb-2">서류제출 및 확인</h4><p class="text-sm text-gray-500">부산 연제구 고분로 191번길 1, 7층 입학홍보처 제출</p></div>
+                                    </div>
+                                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row md:items-center group hover:border-primary transition-all">
+                                        <div class="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 md:mb-0 md:mr-8 group-hover:bg-primary transition-all text-2xl font-black text-primary group-hover:text-white">05</div>
+                                        <div><h4 class="text-lg font-bold mb-2">합격자 발표</h4><p class="text-sm text-gray-500">홈페이지 개별 조회 및 문자 통보</p></div>
+                                    </div>
+                                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row md:items-center group hover:border-primary transition-all">
+                                        <div class="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 md:mb-0 md:mr-8 group-hover:bg-primary transition-all text-2xl font-black text-primary group-hover:text-white">06</div>
+                                        <div><h4 class="text-lg font-bold mb-2">수강신청 및 등록금 납부</h4><p class="text-sm text-gray-500">신청 학점에 따른 등록금 결제</p></div>
+                                    </div>
+                                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col md:flex-row md:items-center group hover:border-primary transition-all">
+                                        <div class="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 md:mb-0 md:mr-8 group-hover:bg-primary transition-all text-2xl font-black text-primary group-hover:text-white">07</div>
+                                        <div><h4 class="text-lg font-bold mb-2">개강 및 수강</h4><p class="text-sm text-gray-500">로그인 후 온라인 강의 수강</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 학과정보 -->
+                        <div id="sub-intro-dept" class="sub-page-content">
+                            <h2 class="text-3xl font-bold text-primary mb-8">학과정보</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/wel/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-orange-500 flex justify-center">
+                                        <i class="fa-solid fa-hands-holding-child"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">사회복지학과</h4>
+                                    <p class="text-xs text-gray-400">현대사회 복지 전문가 양성</p>
+                                </div>
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/mng/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-amber-500 flex justify-center">
+                                        <i class="fa-solid fa-briefcase"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">복지경영학과</h4>
+                                    <p class="text-xs text-gray-400">융합형 복지 경영 리더</p>
+                                </div>
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/psy/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-purple-500 flex justify-center">
+                                        <i class="fa-solid fa-user-group"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">상담심리학과</h4>
+                                    <p class="text-xs text-gray-400">전문 심리 상담사 육성</p>
+                                </div>
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/fam/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-green-600 flex justify-center">
+                                        <i class="fa-solid fa-seedling"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">스마트팜농수산복지학과</h4>
+                                    <p class="text-xs text-gray-400">미래 농수산 복지 선도</p>
+                                </div>
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/kor/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-rose-500 flex justify-center">
+                                        <i class="fa-solid fa-language"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">한국어교육학과</h4>
+                                    <p class="text-xs text-gray-400">글로벌 한국어 교원 양성</p>
+                                </div>
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/for/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-blue-500 flex justify-center">
+                                        <i class="fa-solid fa-globe"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">실용외국어학과</h4>
+                                    <p class="text-xs text-gray-400">실무 중심 외국어 통달</p>
+                                </div>
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/spt/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-emerald-500 flex justify-center">
+                                        <i class="fa-solid fa-dumbbell"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">융합스포츠지도학과</h4>
+                                    <p class="text-xs text-gray-400">창의적 스포츠 지도 전문가</p>
+                                </div>
+                                <div class="dept-card bg-white p-6 rounded-3xl border border-gray-100 shadow-sm text-center card-hover" onclick="window.open('https://www.hscu.ac.kr/home/division/drn/index.jsp', '_blank')">
+                                    <div class="text-4xl mb-4 text-indigo-500 flex justify-center">
+                                        <i class="fa-solid fa-rocket"></i>
+                                    </div>
+                                    <h4 class="font-bold mb-2">실용드론학과</h4>
+                                    <p class="text-xs text-gray-400">4차 산업 드론 전문 인력</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. 모집요강 -->
+                    <div id="page-guide" class="page-content">
+                        <div id="sub-guide-fresh" class="sub-page-content active">
+                            <h2 class="text-3xl font-bold mb-8 text-primary border-b pb-4">신입학 모집요강 (2026학년도)</h2>
+                            
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 1. 모집학과 및 모집인원</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">단과대학</th><th class="border-r">모집학과</th><th>모집인원</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td rowspan="8" class="border-r font-bold bg-slate-50">복지문화대학</td><td class="border-r">사회복지학과</td><td rowspan="8">0명</td></tr>
+                                            <tr><td class="border-r">복지경영학과</td></tr>
+                                            <tr><td class="border-r">상담심리학과</td></tr>
+                                            <tr><td class="border-r">스마트팜농수산복지학과</td></tr>
+                                            <tr><td class="border-r">한국어교육학과</td></tr>
+                                            <tr><td class="border-r">실용외국어학과</td></tr>
+                                            <tr><td class="border-r">융합스포츠지도학과</td></tr>
+                                            <tr><td class="border-r">실용드론학과</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 2. 지원자격</div>
+                                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">고등학교 졸업(예정)자 및 법령에 의하여 이와 동등 이상의 학력이 인정되는 자</div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 3. 전형일정</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">원서접수</th><th class="border-r">합격자발표</th><th>등록금납부</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">1차 모집</td><td class="border-r">2025.12.01 ~ 2026.01.09</td><td class="border-r">2026.01.15</td><td>2026.01.15 ~ 01.16</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 5. 전형방법(배점)</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">항목</th><th class="border-r">지원동기</th><th class="border-r">학업계획서</th><th>합계</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">배점</td><td class="border-r">50점</td><td class="border-r">50점</td><td class="font-bold text-blue-900">100점</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 6. 제출서류</div>
+                                <div class="table-container">
+                                    <table class="table-custom">
+                                        <thead>
+                                            <tr class="text-center"><th class="w-32 border-r">구분</th><th class="border-r">서류명</th><th>대상</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">공통</td><td class="border-r">입학원서 및 고등학교 졸업(예정)증명서 1부</td><td class="text-center">지원자 전원</td></tr>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">해당자</td><td class="border-r">검정고시 합격증명서, 주민등록초본 등</td><td class="text-center">해당 지원자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 11. 전형료 안내</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">금액</th><th>비고</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">전형료</td><td class="border-r">20,000원</td><td>원서 접수 시 온라인 결제</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 12. 장학금 및 등록금</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">장학명</th><th class="border-r">장학금액</th><th>대상조건</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">입학금 면제</td><td class="border-r">전액 면제</td><td>2026학년도 신입생 전원</td></tr>
+                                            <tr><td class="border-r bg-slate-50 font-bold">교내희망장학</td><td class="border-r">수업료의 30~50%</td><td>본교 선발기준 충족자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="sub-guide-transfer" class="sub-page-content active">
+                            <h2 class="text-3xl font-bold mb-8 text-primary border-b pb-4">편입학</h2>
+                            
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 1. 모집학과 및 모집인원</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">단과대학</th><th class="border-r">모집학과</th><th>모집인원</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td rowspan="8" class="border-r font-bold bg-slate-50">복지문화대학</td><td class="border-r">사회복지학과</td><td rowspan="8">0명</td></tr>
+                                            <tr><td class="border-r">복지경영학과</td></tr>
+                                            <tr><td class="border-r">상담심리학과</td></tr>
+                                            <tr><td class="border-r">스마트팜농수산복지학과</td></tr>
+                                            <tr><td class="border-r">한국어교육학과</td></tr>
+                                            <tr><td class="border-r">실용외국어학과</td></tr>
+                                            <tr><td class="border-r">융합스포츠지도학과</td></tr>
+                                            <tr><td class="border-r">실용드론학과</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 2. 지원자격</div>
+                                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">고등학교 졸업(예정)자 및 법령에 의하여 이와 동등 이상의 학력이 인정되는 자</div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 3. 전형일정</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">원서접수</th><th class="border-r">합격자발표</th><th>등록금납부</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">1차 모집</td><td class="border-r">2025.12.01 ~ 2026.01.09</td><td class="border-r">2026.01.15</td><td>2026.01.15 ~ 01.16</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 5. 전형방법(배점)</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">항목</th><th class="border-r">지원동기</th><th class="border-r">학업계획서</th><th>합계</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">배점</td><td class="border-r">50점</td><td class="border-r">50점</td><td class="font-bold text-blue-900">100점</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 6. 제출서류</div>
+                                <div class="table-container">
+                                    <table class="table-custom">
+                                        <thead>
+                                            <tr class="text-center"><th class="w-32 border-r">구분</th><th class="border-r">서류명</th><th>대상</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">공통</td><td class="border-r">입학원서 및 고등학교 졸업(예정)증명서 1부</td><td class="text-center">지원자 전원</td></tr>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">해당자</td><td class="border-r">검정고시 합격증명서, 주민등록초본 등</td><td class="text-center">해당 지원자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 11. 전형료 안내</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">금액</th><th>비고</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">전형료</td><td class="border-r">20,000원</td><td>원서 접수 시 온라인 결제</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 12. 장학금 및 등록금</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">장학명</th><th class="border-r">장학금액</th><th>대상조건</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">입학금 면제</td><td class="border-r">전액 면제</td><td>2026학년도 신입생 전원</td></tr>
+                                            <tr><td class="border-r bg-slate-50 font-bold">교내희망장학</td><td class="border-r">수업료의 30~50%</td><td>본교 선발기준 충족자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+						
+						<div id="sub-guide-extra" class="sub-page-content active">
+                            <h2 class="text-3xl font-bold mb-8 text-primary border-b pb-4">정원 외</h2>
+                            
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 1. 모집학과 및 모집인원</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">단과대학</th><th class="border-r">모집학과</th><th>모집인원</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td rowspan="8" class="border-r font-bold bg-slate-50">복지문화대학</td><td class="border-r">사회복지학과</td><td rowspan="8">0명</td></tr>
+                                            <tr><td class="border-r">복지경영학과</td></tr>
+                                            <tr><td class="border-r">상담심리학과</td></tr>
+                                            <tr><td class="border-r">스마트팜농수산복지학과</td></tr>
+                                            <tr><td class="border-r">한국어교육학과</td></tr>
+                                            <tr><td class="border-r">실용외국어학과</td></tr>
+                                            <tr><td class="border-r">융합스포츠지도학과</td></tr>
+                                            <tr><td class="border-r">실용드론학과</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 2. 지원자격</div>
+                                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">고등학교 졸업(예정)자 및 법령에 의하여 이와 동등 이상의 학력이 인정되는 자</div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 3. 전형일정</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">원서접수</th><th class="border-r">합격자발표</th><th>등록금납부</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">1차 모집</td><td class="border-r">2025.12.01 ~ 2026.01.09</td><td class="border-r">2026.01.15</td><td>2026.01.15 ~ 01.16</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 5. 전형방법(배점)</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">항목</th><th class="border-r">지원동기</th><th class="border-r">학업계획서</th><th>합계</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">배점</td><td class="border-r">50점</td><td class="border-r">50점</td><td class="font-bold text-blue-900">100점</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 6. 제출서류</div>
+                                <div class="table-container">
+                                    <table class="table-custom">
+                                        <thead>
+                                            <tr class="text-center"><th class="w-32 border-r">구분</th><th class="border-r">서류명</th><th>대상</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">공통</td><td class="border-r">입학원서 및 고등학교 졸업(예정)증명서 1부</td><td class="text-center">지원자 전원</td></tr>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">해당자</td><td class="border-r">검정고시 합격증명서, 주민등록초본 등</td><td class="text-center">해당 지원자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 11. 전형료 안내</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">금액</th><th>비고</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">전형료</td><td class="border-r">20,000원</td><td>원서 접수 시 온라인 결제</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 12. 장학금 및 등록금</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">장학명</th><th class="border-r">장학금액</th><th>대상조건</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">입학금 면제</td><td class="border-r">전액 면제</td><td>2026학년도 신입생 전원</td></tr>
+                                            <tr><td class="border-r bg-slate-50 font-bold">교내희망장학</td><td class="border-r">수업료의 30~50%</td><td>본교 선발기준 충족자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+						
+                        <div id="sub-guide-parttime" class="sub-page-content active">
+                            <h2 class="text-3xl font-bold mb-8 text-primary border-b pb-4">시간제 모집요강</h2>
+                            
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 1. 모집학과 및 모집인원</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">단과대학</th><th class="border-r">모집학과</th><th>모집인원</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td rowspan="8" class="border-r font-bold bg-slate-50">복지문화대학</td><td class="border-r">사회복지학과</td><td rowspan="8">0명</td></tr>
+                                            <tr><td class="border-r">복지경영학과</td></tr>
+                                            <tr><td class="border-r">상담심리학과</td></tr>
+                                            <tr><td class="border-r">스마트팜농수산복지학과</td></tr>
+                                            <tr><td class="border-r">한국어교육학과</td></tr>
+                                            <tr><td class="border-r">실용외국어학과</td></tr>
+                                            <tr><td class="border-r">융합스포츠지도학과</td></tr>
+                                            <tr><td class="border-r">실용드론학과</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 2. 지원자격</div>
+                                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">고등학교 졸업(예정)자 및 법령에 의하여 이와 동등 이상의 학력이 인정되는 자</div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 3. 전형일정</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">원서접수</th><th class="border-r">합격자발표</th><th>등록금납부</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">1차 모집</td><td class="border-r">2025.12.01 ~ 2026.01.09</td><td class="border-r">2026.01.15</td><td>2026.01.15 ~ 01.16</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 5. 전형방법(배점)</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">항목</th><th class="border-r">지원동기</th><th class="border-r">학업계획서</th><th>합계</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">배점</td><td class="border-r">50점</td><td class="border-r">50점</td><td class="font-bold text-blue-900">100점</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 6. 제출서류</div>
+                                <div class="table-container">
+                                    <table class="table-custom">
+                                        <thead>
+                                            <tr class="text-center"><th class="w-32 border-r">구분</th><th class="border-r">서류명</th><th>대상</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">공통</td><td class="border-r">입학원서 및 고등학교 졸업(예정)증명서 1부</td><td class="text-center">지원자 전원</td></tr>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">해당자</td><td class="border-r">검정고시 합격증명서, 주민등록초본 등</td><td class="text-center">해당 지원자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 11. 전형료 안내</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">금액</th><th>비고</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">전형료</td><td class="border-r">20,000원</td><td>원서 접수 시 온라인 결제</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 12. 장학금 및 등록금</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">장학명</th><th class="border-r">장학금액</th><th>대상조건</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">입학금 면제</td><td class="border-r">전액 면제</td><td>2026학년도 신입생 전원</td></tr>
+                                            <tr><td class="border-r bg-slate-50 font-bold">교내희망장학</td><td class="border-r">수업료의 30~50%</td><td>본교 선발기준 충족자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+						
+                        <div id="sub-guide-subject" class="sub-page-content active">
+                            <h2 class="text-3xl font-bold mb-8 text-primary border-b pb-4">시간제 개설과목</h2>
+                            
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 1. 모집학과 및 모집인원</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">단과대학</th><th class="border-r">모집학과</th><th>모집인원</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td rowspan="8" class="border-r font-bold bg-slate-50">복지문화대학</td><td class="border-r">사회복지학과</td><td rowspan="8">0명</td></tr>
+                                            <tr><td class="border-r">복지경영학과</td></tr>
+                                            <tr><td class="border-r">상담심리학과</td></tr>
+                                            <tr><td class="border-r">스마트팜농수산복지학과</td></tr>
+                                            <tr><td class="border-r">한국어교육학과</td></tr>
+                                            <tr><td class="border-r">실용외국어학과</td></tr>
+                                            <tr><td class="border-r">융합스포츠지도학과</td></tr>
+                                            <tr><td class="border-r">실용드론학과</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 2. 지원자격</div>
+                                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">고등학교 졸업(예정)자 및 법령에 의하여 이와 동등 이상의 학력이 인정되는 자</div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 3. 전형일정</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">원서접수</th><th class="border-r">합격자발표</th><th>등록금납부</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">1차 모집</td><td class="border-r">2025.12.01 ~ 2026.01.09</td><td class="border-r">2026.01.15</td><td>2026.01.15 ~ 01.16</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 5. 전형방법(배점)</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">항목</th><th class="border-r">지원동기</th><th class="border-r">학업계획서</th><th>합계</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">배점</td><td class="border-r">50점</td><td class="border-r">50점</td><td class="font-bold text-blue-900">100점</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 6. 제출서류</div>
+                                <div class="table-container">
+                                    <table class="table-custom">
+                                        <thead>
+                                            <tr class="text-center"><th class="w-32 border-r">구분</th><th class="border-r">서류명</th><th>대상</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">공통</td><td class="border-r">입학원서 및 고등학교 졸업(예정)증명서 1부</td><td class="text-center">지원자 전원</td></tr>
+                                            <tr><td class="text-center border-r bg-slate-50 font-bold">해당자</td><td class="border-r">검정고시 합격증명서, 주민등록초본 등</td><td class="text-center">해당 지원자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 11. 전형료 안내</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">구분</th><th class="border-r">금액</th><th>비고</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">전형료</td><td class="border-r">20,000원</td><td>원서 접수 시 온라인 결제</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-12">
+                                <div class="guide-section-title"><span></span> 12. 장학금 및 등록금</div>
+                                <div class="table-container">
+                                    <table class="table-custom text-center">
+                                        <thead>
+                                            <tr><th class="border-r">장학명</th><th class="border-r">장학금액</th><th>대상조건</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td class="border-r bg-slate-50 font-bold">입학금 면제</td><td class="border-r">전액 면제</td><td>2026학년도 신입생 전원</td></tr>
+                                            <tr><td class="border-r bg-slate-50 font-bold">교내희망장학</td><td class="border-r">수업료의 30~50%</td><td>본교 선발기준 충족자</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="sub-guide-scholar" class="sub-page-content"><h2 class="text-3xl font-bold mb-4 text-primary">장학안내</h2></div>
+                    </div>
+
+                    <!-- 3. 지원서작성 (APPLY) -->
+                    <div id="page-apply" class="page-content">
+                        <h2 class="text-3xl font-bold mb-8 text-center text-primary">지원서 작성</h2>
+                        <div class="max-w-xl mx-auto bg-white p-10 rounded-3xl border shadow-xl text-center">
+                            <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </div>
+                            <p class="text-gray-500 mb-8">안전한 입학 지원을 위해 본인인증 후 작성을 시작합니다.</p>
+                            <button class="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition-all" onclick="showAlert('인증 서비스로 연결됩니다.')">실명인증 후 작성하기</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. 나의지원현황 (STATUS) -->
+                    <div id="page-status" class="page-content">
+                        <div id="sub-status-my" class="sub-page-content active"><h2 class="text-3xl font-bold mb-8 text-primary">나의 지원 현황</h2></div>
+                        <div id="sub-status-result" class="sub-page-content"><h2 class="text-3xl font-bold mb-8 text-primary">합격확인하기</h2></div>
+                        <div id="sub-status-payment" class="sub-page-content"><h2 class="text-3xl font-bold mb-8 text-primary">전형료 납부 확인</h2></div>
+                    </div>
+
+                    <!-- 5. 입학자료실 (ARCHIVE) -->
+                    <div id="page-archive" class="page-content">
+                        <div id="sub-archive-down" class="sub-page-content active"><h2 class="text-3xl font-bold mb-8 text-primary">입학자료 다운로드</h2></div>
+                        <div id="sub-archive-req" class="sub-page-content"><h2 class="text-3xl font-bold mb-8 text-primary">입학자료 신청</h2></div>
+                    </div>
+
+                    <!-- 6. 입학상담실 (QNA) -->
+                    <div id="page-qna" class="page-content">
+                        <div id="sub-qna-phone" class="sub-page-content active"><h2 class="text-3xl font-bold mb-8 text-primary">상담전화번호</h2><div class="bg-primary text-white p-12 rounded-3xl text-center"><p class="text-5xl font-bold mb-4">051-123-4567</p></div></div>
+                        <div id="sub-qna-faq" class="sub-page-content"><h2 class="text-3xl font-bold mb-8 text-primary">FAQ</h2></div>
+                        <div id="sub-qna-board" class="sub-page-content"><h2 class="text-3xl font-bold mb-8 text-primary">QNA</h2></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-500 py-16 mt-20">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-[10px] uppercase tracking-widest leading-relaxed">
+                부산광역시 연제구 거제대로 123 | 대표전화: 051-123-4567<br>
+                COPYRIGHT © HWASHIN CYBER UNIVERSITY. ALL RIGHTS RESERVED.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Slider Logic ---
+        let currentSlide = 0;
+        let slideTimer = null;
+        let isPlaying = true;
+        const slides = document.querySelectorAll('.slide');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            currentSlide = (index + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function startTimer() {
+            if (slideTimer) clearInterval(slideTimer);
+            slideTimer = setInterval(nextSlide, 3000);
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                clearInterval(slideTimer);
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+            } else {
+                startTimer();
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // --- Navigation Logic ---
+        const menuData = {
+            'home': { title: '홈', subs: [] },
+            'intro': { title: '입학안내', subs: [{ id: 'schedule', name: '입시일정' }, { id: 'procedure', name: '입학절차안내' }, { id: 'dept', name: '학과정보' }, { id: 'notice', name: '입학공지' }] },
+             'guide': { title: '모집요강', subs: [{ id: 'fresh', name: '신입학' }, { id: 'transfer', name: '편입학' }, { id: 'extra', name: '정원 외' }, { id: 'parttime', name: '시간제 모집요강' }, { id: 'subject', name: '시간제 개설과목' }, { id: 'scholar', name: '장학안내' }] },
+            'apply': { title: '지원서작성', subs: [] },
+            'status': { title: '나의지원현황', subs: [{ id: 'my', name: '나의지원현황' }, { id: 'result', name: '합격확인하기' }] },
+            'archive': { title: '입학자료실', subs: [{ id: 'down', name: '입학자료다운로드' }] },
+            'qna': { title: '입학상담실', subs: [{ id: 'phone', name: '상담전화번호' }, { id: 'faq', name: 'FAQ' }, { id: 'qna', name: 'Q&A' }] }
+        };
+
+        function navigateTo(pageId, subId = null) {
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(p => p.classList.remove('active'));
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) targetPage.classList.add('active');
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.textContent.trim() === menuData[pageId]?.title) link.classList.add('nav-active');
+                else link.classList.remove('nav-active');
+            });
+
+            const sidebar = document.getElementById('sidebar');
+            const subNav = document.getElementById('sub-nav-container');
+            const sidebarTitle = document.getElementById('sidebar-title');
+
+            if (pageId === 'home' || pageId === 'apply' || !menuData[pageId]?.subs?.length) {
+                sidebar.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('hidden');
+                sidebarTitle.innerText = menuData[pageId].title;
+                subNav.innerHTML = '';
+                menuData[pageId].subs.forEach(sub => {
+                    const btn = document.createElement('button');
+                    btn.className = `w-full text-left px-4 py-3 text-sm font-bold border-b border-gray-50 last:border-0 hover:text-primary transition-colors`;
+                    btn.innerText = sub.name;
+                    btn.id = `sub-btn-${sub.id}`;
+                    btn.onclick = () => {
+                        if (sub.id === 'faq') {
+                            window.open('https://www.hscu.ac.kr', '_blank');
+                        } else if (sub.id === 'qna') {
+                            window.open('https://apply.hscu.ac.kr', '_blank');
+                        } else {
+                            switchSubPage(pageId, sub.id);
+                        }
+                    };
+                    subNav.appendChild(btn);
+                });
+                const targetSub = subId || menuData[pageId].subs[0].id;
+                switchSubPage(pageId, targetSub);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (document.getElementById('mobile-menu')) document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        function switchSubPage(pageId, subId) {
+            const subPages = document.querySelectorAll(`#page-${pageId} .sub-page-content`);
+            subPages.forEach(sp => sp.classList.remove('active'));
+            const targetSubPage = document.getElementById(`sub-${pageId}-${subId}`);
+            if (targetSubPage) targetSubPage.classList.add('active');
+            const subBtns = document.querySelectorAll('#sub-nav-container button');
+            subBtns.forEach(btn => btn.classList.remove('sub-nav-active'));
+            const activeBtn = document.getElementById(`sub-btn-${subId}`);
+            if (activeBtn) activeBtn.classList.add('sub-nav-active');
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function showAlert(msg) {
+            document.getElementById('alert-message').innerText = msg;
+            document.getElementById('custom-alert').classList.remove('hidden');
+        }
+        function closeAlert() { document.getElementById('custom-alert').classList.add('hidden'); }
+
+        window.onload = () => {
+            navigateTo('home');
+            startTimer();
+        };
+    </script>
+</body>
+</html>
